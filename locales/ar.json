@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "طلب الدعم الاجتماعي",
+    "subtitle": "تقدّم بطلب المساعدة المالية في خطوات بسيطة.",
+    "languageLabel": "English"
+  },
+  "nav": {
+    "back": "رجوع",
+    "next": "التالي",
+    "submit": "إرسال الطلب",
+    "submitting": "جارٍ الإرسال…"
+  },
+  "progress": {
+    "step": "الخطوة {{current}} من {{total}}",
+    "label": "تقدّم الطلب"
+  },
+  "steps": {
+    "personal": "المعلومات الشخصية",
+    "family": "معلومات الأسرة والمالية",
+    "situation": "وصف الحالة"
+  },
+  "resume": {
+    "title": "متابعة طلبك؟",
+    "body": "وجدنا مسودة محفوظة على هذا الجهاز.",
+    "resume": "متابعة",
+    "discard": "البدء من جديد"
+  },
+  "fields": {
+    "name": "الاسم الكامل",
+    "nationalId": "رقم الهوية الوطنية",
+    "dateOfBirth": "تاريخ الميلاد",
+    "gender": "الجنس",
+    "address": "العنوان",
+    "city": "المدينة",
+    "state": "المحافظة",
+    "country": "الدولة",
+    "phone": "رقم الهاتف",
+    "email": "البريد الإلكتروني",
+    "maritalStatus": "الحالة الاجتماعية",
+    "dependents": "عدد المعالين",
+    "employmentStatus": "الحالة الوظيفية",
+    "monthlyIncome": "الدخل الشهري",
+    "housingStatus": "حالة السكن",
+    "currentFinancialSituation": "الوضع المالي الحالي",
+    "employmentCircumstances": "ظروف العمل",
+    "reasonForApplying": "سبب التقديم"
+  },
+  "options": {
+    "gender": { "male": "ذكر", "female": "أنثى", "other": "آخر" },
+    "maritalStatus": {
+      "single": "أعزب",
+      "married": "متزوج",
+      "divorced": "مطلّق",
+      "widowed": "أرمل"
+    },
+    "employmentStatus": {
+      "employed": "موظف",
+      "unemployed": "عاطل عن العمل",
+      "selfEmployed": "يعمل لحسابه الخاص",
+      "student": "طالب",
+      "retired": "متقاعد"
+    },
+    "housingStatus": {
+      "owned": "ملك",
+      "rented": "إيجار",
+      "withFamily": "يعيش مع العائلة",
+      "homeless": "بدون سكن ثابت"
+    }
+  },
+  "placeholders": {
+    "select": "اختر…"
+  },
+  "validation": {
+    "required": "هذا الحقل مطلوب",
+    "email": "أدخل بريدًا إلكترونيًا صالحًا",
+    "phone": "أدخل رقم هاتف صالحًا",
+    "nationalId": "أدخل رقم هوية صالحًا",
+    "pastDate": "يجب أن يكون التاريخ في الماضي",
+    "min0": "يجب أن يكون 0 أو أكثر",
+    "tooShort": "يرجى تقديم المزيد من التفاصيل"
+  },
+  "ai": {
+    "helpMeWrite": "ساعدني في الكتابة",
+    "generating": "جارٍ إنشاء اقتراح…",
+    "dialogTitle": "اقتراح الذكاء الاصطناعي",
+    "accept": "قبول",
+    "edit": "تعديل",
+    "discard": "تجاهل",
+    "retry": "حاول مرة أخرى",
+    "editHint": "عدّل الاقتراح قبل إضافته إلى طلبك.",
+    "unavailable": "مساعدة الذكاء الاصطناعي غير مُهيأة.",
+    "errors": {
+      "timeout": "استغرق الطلب وقتًا طويلاً. يرجى المحاولة مرة أخرى.",
+      "generic": "حدث خطأ أثناء إنشاء الاقتراح.",
+      "empty": "لم يتم إرجاع أي اقتراح. يرجى المحاولة مرة أخرى."
+    }
+  },
+  "submit": {
+    "successTitle": "تم إرسال الطلب",
+    "successBody": "شكرًا لك. رقمك المرجعي هو {{ref}}.",
+    "error": "تعذّر إرسال طلبك. يرجى المحاولة مرة أخرى."
+  }
+}

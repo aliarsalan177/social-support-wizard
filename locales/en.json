@@ -1,0 +1,103 @@
+{
+  "app": {
+    "title": "Social Support Application",
+    "subtitle": "Apply for financial assistance in a few simple steps.",
+    "languageLabel": "العربية"
+  },
+  "nav": {
+    "back": "Back",
+    "next": "Next",
+    "submit": "Submit application",
+    "submitting": "Submitting…"
+  },
+  "progress": {
+    "step": "Step {{current}} of {{total}}",
+    "label": "Application progress"
+  },
+  "steps": {
+    "personal": "Personal Information",
+    "family": "Family & Financial Info",
+    "situation": "Situation Descriptions"
+  },
+  "resume": {
+    "title": "Resume your application?",
+    "body": "We found a saved draft on this device.",
+    "resume": "Resume",
+    "discard": "Start over"
+  },
+  "fields": {
+    "name": "Full name",
+    "nationalId": "National ID",
+    "dateOfBirth": "Date of birth",
+    "gender": "Gender",
+    "address": "Address",
+    "city": "City",
+    "state": "State",
+    "country": "Country",
+    "phone": "Phone",
+    "email": "Email",
+    "maritalStatus": "Marital status",
+    "dependents": "Number of dependents",
+    "employmentStatus": "Employment status",
+    "monthlyIncome": "Monthly income",
+    "housingStatus": "Housing status",
+    "currentFinancialSituation": "Current financial situation",
+    "employmentCircumstances": "Employment circumstances",
+    "reasonForApplying": "Reason for applying"
+  },
+  "options": {
+    "gender": { "male": "Male", "female": "Female", "other": "Other" },
+    "maritalStatus": {
+      "single": "Single",
+      "married": "Married",
+      "divorced": "Divorced",
+      "widowed": "Widowed"
+    },
+    "employmentStatus": {
+      "employed": "Employed",
+      "unemployed": "Unemployed",
+      "selfEmployed": "Self-employed",
+      "student": "Student",
+      "retired": "Retired"
+    },
+    "housingStatus": {
+      "owned": "Owned",
+      "rented": "Rented",
+      "withFamily": "Living with family",
+      "homeless": "No fixed housing"
+    }
+  },
+  "placeholders": {
+    "select": "Select…"
+  },
+  "validation": {
+    "required": "This field is required",
+    "email": "Enter a valid email address",
+    "phone": "Enter a valid phone number",
+    "nationalId": "Enter a valid National ID",
+    "pastDate": "Date must be in the past",
+    "min0": "Must be 0 or more",
+    "tooShort": "Please provide a little more detail"
+  },
+  "ai": {
+    "helpMeWrite": "Help me write",
+    "generating": "Generating a suggestion…",
+    "dialogTitle": "AI suggestion",
+    "accept": "Accept",
+    "edit": "Edit",
+    "discard": "Discard",
+    "retry": "Try again",
+    "editHint": "Edit the suggestion before adding it to your application.",
+    "unavailable": "AI assistance is not configured.",
+    "errors": {
+      "timeout": "The request took too long. Please try again.",
+      "generic": "Something went wrong while generating a suggestion.",
+      "empty": "No suggestion was returned. Please try again."
+    }
+  },
+  "submit": {
+    "successTitle": "Application submitted",
+    "successBody": "Thank you. Your reference number is {{ref}}.",
+    "error": "We could not submit your application. Please try again."
+  }
+}
