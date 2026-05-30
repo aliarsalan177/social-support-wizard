@@ -20,14 +20,14 @@
  */
 import { useState, type FormEvent } from 'react';
 import { useFormContext } from 'react-hook-form';
-import { useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { ProgressBar } from './components/progress-bar';
 import { StepNav } from './components/step-nav';
 import { ResumeBanner } from './components/resume-banner';
 import { SuccessScreen } from './components/success-screen';
 import { STEP_MAP, type StepNumber } from './steps/step-config';
-import { stepFields, TOTAL_STEPS, type ApplicationData } from './schema';
+import { stepFields, stepSchemas, TOTAL_STEPS, type ApplicationData } from './schema';
 import { useWizard } from './hooks/use-wizard';
 import { useSubmitApplication } from './hooks/use-submit-application';
 
@@ -36,6 +36,19 @@ function clampStep(raw: string | undefined): number {
   if (!Number.isInteger(n) || n < 1) return 1;
   if (n > TOTAL_STEPS) return TOTAL_STEPS;
   return n;
+}
+
+/**
+ * The furthest step the user may access: every earlier step must validate
+ * first. Returns the first step that fails, or the last step when all pass.
+ */
+function maxReachableStep(values: ApplicationData): StepNumber {
+  for (let s = 1; s <= TOTAL_STEPS; s++) {
+    if (!stepSchemas[s as StepNumber].safeParse(values).success) {
+      return s as StepNumber;
+    }
+  }
+  return TOTAL_STEPS;
 }
 
 export function WizardPage() {
@@ -58,23 +71,41 @@ export function WizardPage() {
 
   const goToStep = (n: number) => navigate(`/apply/step/${n}`);
 
+  const handleResume = () => {
+    resumeDraft();
+    setShowResume(false);
+  };
+
+  const handleDiscard = () => {
+    clearDraft();
+    setShowResume(false);
+    goToStep(1);
+  };
+
+  const handleBack = () => goToStep(step - 1);
+
+  // Final submit: persist the application and clear the saved draft.
+  const handleValidSubmit = async (data: ApplicationData) => {
+    const res = await submit(data);
+    if (res) clearDraft();
+  };
+
+  // Mark the current step's fields touched so any errors become visible,
+  // even for fields the user hasn't interacted with yet.
+  const revealStepErrors = () => {
+    for (const field of stepFields[step]) {
+      setValue(field, getValues(field), { shouldTouch: true });
+    }
+  };
+
   const handleFormSubmit = async (e: FormEvent) => {
     e.preventDefault();
     if (isLast) {
-      // Final submit validates the entire application schema.
-      await handleSubmit(async (data) => {
-        const res = await submit(data);
-        if (res) clearDraft();
-      })();
+      await handleSubmit(handleValidSubmit)();
       return;
     }
-    // Advancing only validates the current step's fields. Mark them touched
-    // first so any errors become visible even for fields not yet interacted with.
-    const fields = stepFields[step];
-    fields.forEach((field) =>
-      setValue(field, getValues(field), { shouldTouch: true }),
-    );
-    const valid = await trigger(fields);
+    revealStepErrors();
+    const valid = await trigger(stepFields[step]);
     if (valid) goToStep(step + 1);
   };
 
@@ -82,20 +113,17 @@ export function WizardPage() {
     return <SuccessScreen referenceNumber={result.referenceNumber} />;
   }
 
+  // Block deep-linking past incomplete steps: send the user back to the
+  // first step they still need to complete.
+  const reachable = maxReachableStep(getValues());
+  if (step > reachable) {
+    return <Navigate to={`/apply/step/${reachable}`} replace />;
+  }
+
   return (
     <div>
       {showResume && (
-        <ResumeBanner
-          onResume={() => {
-            resumeDraft();
-            setShowResume(false);
-          }}
-          onDiscard={() => {
-            clearDraft();
-            setShowResume(false);
-            goToStep(1);
-          }}
-        />
+        <ResumeBanner onResume={handleResume} onDiscard={handleDiscard} />
       )}
       <ProgressBar current={step} />
       <form onSubmit={handleFormSubmit} noValidate>
@@ -109,7 +137,7 @@ export function WizardPage() {
           isFirst={isFirst}
           isLast={isLast}
           isSubmitting={isSubmitting}
-          onBack={() => goToStep(step - 1)}
+          onBack={handleBack}
         />
       </form>
     </div>

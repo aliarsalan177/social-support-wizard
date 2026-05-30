@@ -12,7 +12,7 @@
  * Depends on:
  * - Dialog (accessible modal primitive)
  */
-import { useState } from 'react';
+import { useState, type ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Dialog } from '@/components/dialog';
 
@@ -47,6 +47,11 @@ export function SuggestionDialog({
     setDraft(suggestion);
     setEditing(false);
   }
+
+  const handleDraftChange = (e: ChangeEvent<HTMLTextAreaElement>) =>
+    setDraft(e.target.value);
+  const handleEdit = () => setEditing(true);
+  const handleAccept = () => onAccept(draft);
 
   return (
     <Dialog open={open} title={t('ai.dialogTitle')} onClose={onDiscard}>
@@ -88,7 +93,7 @@ export function SuggestionDialog({
               <textarea
                 aria-label={t('ai.dialogTitle')}
                 value={draft}
-                onChange={(e) => setDraft(e.target.value)}
+                onChange={handleDraftChange}
                 rows={6}
                 className="block w-full rounded-md border border-slate-300 px-3 py-2 text-slate-900"
               />
@@ -110,7 +115,7 @@ export function SuggestionDialog({
             {!editing && (
               <button
                 type="button"
-                onClick={() => setEditing(true)}
+                onClick={handleEdit}
                 className="cursor-pointer rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
               >
                 {t('ai.edit')}
@@ -118,7 +123,7 @@ export function SuggestionDialog({
             )}
             <button
               type="button"
-              onClick={() => onAccept(draft)}
+              onClick={handleAccept}
               className="cursor-pointer rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
             >
               {t('ai.accept')}

@@ -1,5 +1,5 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { debounce, readJson, remove, writeJson } from './storage';
+import { debounce, readJson, remove, writeJson } from '@/utils/storage';
 
 describe('storage helpers', () => {
   beforeEach(() => localStorage.clear());

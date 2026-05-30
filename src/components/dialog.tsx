@@ -12,7 +12,7 @@
  * Depends on:
  * - React only (no external UI library)
  */
-import { useEffect, useId, useRef, type ReactNode } from 'react';
+import { useEffect, useId, useRef, type MouseEvent, type ReactNode } from 'react';
 
 interface DialogProps {
   open: boolean;
@@ -69,14 +69,17 @@ export function Dialog({ open, title, onClose, children }: DialogProps) {
     };
   }, [open, onClose]);
 
+  // Close when the backdrop itself (not the panel) is clicked.
+  const handleBackdropMouseDown = (e: MouseEvent<HTMLDivElement>) => {
+    if (e.target === e.currentTarget) onClose();
+  };
+
   if (!open) return null;
 
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
-      onMouseDown={(e) => {
-        if (e.target === e.currentTarget) onClose();
-      }}
+      onMouseDown={handleBackdropMouseDown}
     >
       <div
         ref={panelRef}

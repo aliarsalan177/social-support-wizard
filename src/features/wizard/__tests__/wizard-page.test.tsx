@@ -5,9 +5,9 @@ import { MemoryRouter } from 'react-router-dom';
 import App from '@/App';
 import { DRAFT_STORAGE_KEY } from '@/features/wizard/defaults';
 
-function renderApp() {
+function renderApp(route = '/apply/step/1') {
   return render(
-    <MemoryRouter initialEntries={['/apply/step/1']}>
+    <MemoryRouter initialEntries={[route]}>
       <App />
     </MemoryRouter>,
   );
@@ -164,5 +164,29 @@ describe('Draft persistence & resume', () => {
   it('shows no resume banner when there is no saved draft', () => {
     renderApp();
     expect(screen.queryByRole('button', { name: 'Resume' })).not.toBeInTheDocument();
+  });
+});
+
+describe('Step access guard', () => {
+  it('redirects to step 1 when deep-linking to step 3 with nothing filled', async () => {
+    renderApp('/apply/step/3');
+    expect(await screen.findByText('Step 1 of 3')).toBeInTheDocument();
+  });
+
+  it('redirects to step 1 when deep-linking to step 2 with nothing filled', async () => {
+    renderApp('/apply/step/2');
+    expect(await screen.findByText('Step 1 of 3')).toBeInTheDocument();
+  });
+
+  it('allows step 2 once step 1 is valid, but still blocks step 3', async () => {
+    const user = userEvent.setup();
+    renderApp();
+
+    await fillStep1(user);
+    await user.click(screen.getByRole('button', { name: 'Next' }));
+    expect(await screen.findByText('Step 2 of 3')).toBeInTheDocument();
+
+    // Step 2 is reachable, but step 3 is not until step 2 is completed.
+    expect(screen.queryByText('Step 3 of 3')).not.toBeInTheDocument();
   });
 });

@@ -59,6 +59,8 @@ export function HelpMeWriteButton({ field, fieldLabel }: HelpMeWriteButtonProps)
     close();
   };
 
+  const handleRetry = () => void generate(promptFor());
+
   return (
     <>
       <button
@@ -79,7 +81,7 @@ export function HelpMeWriteButton({ field, fieldLabel }: HelpMeWriteButtonProps)
         errorKey={errorKey}
         onAccept={accept}
         onDiscard={close}
-        onRetry={() => void generate(promptFor())}
+        onRetry={handleRetry}
       />
     </>
   );

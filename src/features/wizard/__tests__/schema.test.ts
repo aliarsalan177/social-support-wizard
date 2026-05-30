@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest';
-import { step1Schema, step2Schema, step3Schema } from './schema';
+import { step1Schema, step2Schema, step3Schema } from '@/features/wizard/schema';
 
 const validStep1 = {
   name: 'Sara Ahmed',

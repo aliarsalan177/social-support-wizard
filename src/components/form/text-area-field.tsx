@@ -2,7 +2,8 @@
  * TextAreaField
  *
  * Accessible, RHF-bound <textarea> with:
- * - an optional action slot beside the label (the AI "Help me write" button)
+ * - an optional action rendered INSIDE the field at the bottom-end corner
+ *   (the AI "Help me write" button, like LinkedIn's inline AI assistant)
  * - label + ARIA error wiring and interaction-gated error display
  *
  * Used in:
@@ -22,7 +23,7 @@ interface TextAreaFieldProps {
   name: FieldPath<ApplicationData>;
   label: string;
   rows?: number;
-  /** Optional control rendered beside the label (the AI "Help me write" button). */
+  /** Optional control rendered inside the field, pinned to the bottom-end. */
   action?: ReactNode;
 }
 
@@ -34,16 +35,20 @@ export function TextAreaField({ name, label, rows = 4, action }: TextAreaFieldPr
   const errorKey = useFieldError(name);
 
   return (
-    <FieldShell id={name} label={label} errorKey={errorKey} action={action}>
+    <FieldShell id={name} label={label} errorKey={errorKey}>
       {({ id, describedBy, invalid }) => (
-        <textarea
-          id={id}
-          rows={rows}
-          aria-invalid={invalid}
-          aria-describedby={describedBy}
-          className={`${areaClass} ${invalid ? 'border-red-400' : 'border-slate-300'}`}
-          {...register(name)}
-        />
+        <div className="relative">
+          <textarea
+            id={id}
+            rows={rows}
+            aria-invalid={invalid}
+            aria-describedby={describedBy}
+            // Reserve space at the bottom so typed text never sits under the action.
+            className={`${areaClass} ${action ? 'pb-12' : ''} ${invalid ? 'border-red-400' : 'border-slate-300'}`}
+            {...register(name)}
+          />
+          {action && <div className="absolute bottom-2 end-2">{action}</div>}
+        </div>
       )}
     </FieldShell>
   );
