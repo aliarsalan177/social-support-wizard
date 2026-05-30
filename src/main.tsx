@@ -4,7 +4,11 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import '@/utils/i18n';
 import { DirectionProvider } from '@/app/providers/direction-provider';
+import { captureOpenAiKeyFromUrl } from '@/utils/openai-key';
 import App from '@/App';
+
+// Pick up an OpenAI key passed as ?open-ai-key=... (10-min TTL) before render.
+captureOpenAiKeyFromUrl();
 
 /** In dev, route the mock submit API through MSW so there's no real backend. */
 async function enableMocking() {

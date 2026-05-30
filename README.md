@@ -75,10 +75,25 @@ The Step 3 **"Help me write"** buttons call the OpenAI Chat Completions API.
 Without a key, the rest of the form works normally and the AI buttons are
 disabled with an explanatory tooltip.
 
+### Trying the deployed demo with your own key
+
+The build ships without a key, so to test **"Help Me Write"** on the live demo
+you can pass your own key in the URL:
+
+```
+https://<your-deployment>/apply/step/1?open-ai-key=sk-...your-key...
+```
+
+The app stores that key in LocalStorage **for 10 minutes**, then removes the
+`?open-ai-key` param from the address bar. After 10 minutes the key auto-expires
+and is deleted, so you'd add it again to keep using the AI feature. A build-time
+`VITE_OPENAI_API_KEY` always takes precedence over a URL-supplied key.
+
 > ⚠️ **Security:** the API key is read in the browser and the request goes
-> straight to OpenAI, which **exposes the key to the client**. This is acceptable
-> for the case study only. In production, proxy the call through a backend /
-> serverless function so the key stays server-side. See _Architecture → Security_.
+> straight to OpenAI, which **exposes the key to the client** (and the URL/LocalStorage
+> key even more so). This is acceptable for the case study / demo only. In
+> production, proxy the call through a backend / serverless function so the key
+> stays server-side. See _Architecture → Security_.
 
 ---
 
@@ -163,7 +178,7 @@ src/
 │       ├── hooks/use-help-write.ts
 │       ├── components/suggestion-dialog.tsx
 │       └── __tests__/
-├── utils/                      # i18n config, env, http (ky), storage
+├── utils/                      # i18n config, env, http (ky), storage, openai-key
 ├── mocks/                      # MSW handlers + browser/server setup
 └── test/                       # shared test setup + render helper
 ```
@@ -209,6 +224,8 @@ src/
 - **Draft persistence & resume** — starts empty, Resume autofills, fresh input
   overwrites a stale draft, no banner without a draft.
 - **AI flow** — suggestion → accept into field; API error → alert + retry; discard.
+- **OpenAI key from URL** — `?open-ai-key` is captured, stripped from the URL, and
+  expires after 10 minutes.
 - **Storage helpers** — JSON round-trip + debounce.
 
 ### Security & production improvements

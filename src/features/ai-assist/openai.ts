@@ -1,5 +1,5 @@
 import { http, TimeoutError } from '@/utils/http';
-import { env } from '@/utils/env';
+import { env, getOpenAiKey } from '@/utils/env';
 
 const OPENAI_URL = 'https://api.openai.com/v1/chat/completions';
 
@@ -35,7 +35,7 @@ export async function generateSuggestion(
   try {
     data = await http
       .post(OPENAI_URL, {
-        headers: { Authorization: `Bearer ${env.OPENAI_API_KEY}` },
+        headers: { Authorization: `Bearer ${getOpenAiKey()}` },
         json: {
           model: env.OPENAI_MODEL,
           messages: [

@@ -8,11 +8,8 @@ import { Step3Situation } from '@/features/wizard/steps/step-3-situation';
 
 // Pretend an API key is configured so the AI button is enabled.
 vi.mock('@/utils/env', () => ({
-  env: {
-    OPENAI_API_KEY: 'test-key',
-    OPENAI_MODEL: 'gpt-3.5-turbo',
-    SUBMIT_URL: '/api/applications',
-  },
+  env: { OPENAI_MODEL: 'gpt-3.5-turbo', SUBMIT_URL: '/api/applications' },
+  getOpenAiKey: () => 'test-key',
   isAiConfigured: () => true,
 }));
 

@@ -1,18 +1,27 @@
 /**
  * Centralised, validated access to environment variables.
  * Keeping this in one place means the rest of the app never reads
- * `import.meta.env` directly and we fail loudly when something is missing.
+ * `import.meta.env` directly.
  */
+import { getStoredOpenAiKey } from '@/utils/openai-key';
 
-const OPENAI_API_KEY = import.meta.env.VITE_OPENAI_API_KEY ?? '';
+/** Build-time key from Vite env (optional). */
+const BUILD_OPENAI_KEY = (import.meta.env.VITE_OPENAI_API_KEY ?? '').trim();
 
 export const env = {
-  /** May be empty in dev — the AI feature degrades gracefully when it is. */
-  OPENAI_API_KEY,
   OPENAI_MODEL: import.meta.env.VITE_OPENAI_MODEL ?? 'gpt-3.5-turbo',
   /** Mock endpoint by default; tests intercept this with MSW. */
   SUBMIT_URL: import.meta.env.VITE_SUBMIT_URL ?? '/api/applications',
 } as const;
 
-/** True when an OpenAI key is configured. UI uses this to disable AI cleanly. */
-export const isAiConfigured = (): boolean => env.OPENAI_API_KEY.trim().length > 0;
+/**
+ * Resolve the OpenAI key at call time: a build-time `VITE_OPENAI_API_KEY` wins;
+ * otherwise a key supplied via `?open-ai-key=` in the URL (stored with a 10-min
+ * TTL) is used. Returns '' when neither is available.
+ */
+export function getOpenAiKey(): string {
+  return BUILD_OPENAI_KEY || getStoredOpenAiKey();
+}
+
+/** True when an OpenAI key is available. UI uses this to disable AI cleanly. */
+export const isAiConfigured = (): boolean => getOpenAiKey().length > 0;
