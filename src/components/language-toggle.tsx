@@ -14,7 +14,7 @@ export function LanguageToggle() {
     <button
       type="button"
       onClick={toggle}
-      className="rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+      className="cursor-pointer rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
     >
       {t('app.languageLabel')}
     </button>

@@ -19,14 +19,14 @@ export function ResumeBanner({ onResume, onDiscard }: ResumeBannerProps) {
         <button
           type="button"
           onClick={onResume}
-          className="rounded-md bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-700"
+          className="cursor-pointer rounded-md bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-700"
         >
           {t('resume.resume')}
         </button>
         <button
           type="button"
           onClick={onDiscard}
-          className="rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
+          className="cursor-pointer rounded-md border border-slate-300 px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100"
         >
           {t('resume.discard')}
         </button>

@@ -65,14 +65,14 @@ export function SuggestionDialog({
             <button
               type="button"
               onClick={onDiscard}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+              className="cursor-pointer rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
             >
               {t('ai.discard')}
             </button>
             <button
               type="button"
               onClick={onRetry}
-              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+              className="cursor-pointer rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
             >
               {t('ai.retry')}
             </button>
@@ -103,7 +103,7 @@ export function SuggestionDialog({
             <button
               type="button"
               onClick={onDiscard}
-              className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+              className="cursor-pointer rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
             >
               {t('ai.discard')}
             </button>
@@ -111,7 +111,7 @@ export function SuggestionDialog({
               <button
                 type="button"
                 onClick={() => setEditing(true)}
-                className="rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
+                className="cursor-pointer rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100"
               >
                 {t('ai.edit')}
               </button>
@@ -119,7 +119,7 @@ export function SuggestionDialog({
             <button
               type="button"
               onClick={() => onAccept(draft)}
-              className="rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
+              className="cursor-pointer rounded-md bg-brand-600 px-4 py-2 text-sm font-semibold text-white hover:bg-brand-700"
             >
               {t('ai.accept')}
             </button>

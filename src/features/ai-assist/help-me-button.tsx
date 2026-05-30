@@ -66,7 +66,7 @@ export function HelpMeWriteButton({ field, fieldLabel }: HelpMeWriteButtonProps)
         onClick={start}
         disabled={!configured}
         title={configured ? undefined : t('ai.unavailable')}
-        className="inline-flex items-center gap-1 rounded-md border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-100 disabled:cursor-not-allowed disabled:opacity-50"
+        className="inline-flex cursor-pointer items-center gap-1 rounded-md border border-brand-200 bg-brand-50 px-2.5 py-1 text-xs font-semibold text-brand-700 hover:bg-brand-100 disabled:cursor-not-allowed disabled:opacity-50"
       >
         <span aria-hidden="true">✨</span>
         {t('ai.helpMeWrite')}

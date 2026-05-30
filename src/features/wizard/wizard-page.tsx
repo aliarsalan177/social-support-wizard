@@ -26,9 +26,7 @@ import { ProgressBar } from './components/progress-bar';
 import { StepNav } from './components/step-nav';
 import { ResumeBanner } from './components/resume-banner';
 import { SuccessScreen } from './components/success-screen';
-import { Step1Personal } from './steps/step-1-personal';
-import { Step2Family } from './steps/step-2-family';
-import { Step3Situation } from './steps/step-3-situation';
+import { STEP_MAP, type StepNumber } from './steps/step-config';
 import { stepFields, TOTAL_STEPS, type ApplicationData } from './schema';
 import { useWizard } from './hooks/use-wizard';
 import { useSubmitApplication } from './hooks/use-submit-application';
@@ -44,11 +42,12 @@ export function WizardPage() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { step: stepParam } = useParams();
-  const step = clampStep(stepParam);
+  const step = clampStep(stepParam) as StepNumber;
+  const { Component: StepComponent } = STEP_MAP[step];
 
   const { handleSubmit, trigger, getValues, setValue } =
     useFormContext<ApplicationData>();
-  const { hadSavedDraft, clearDraft } = useWizard();
+  const { hadSavedDraft, resumeDraft, clearDraft } = useWizard();
   const { submit, isSubmitting, isSuccess, isError, result } =
     useSubmitApplication();
 
@@ -71,7 +70,7 @@ export function WizardPage() {
     }
     // Advancing only validates the current step's fields. Mark them touched
     // first so any errors become visible even for fields not yet interacted with.
-    const fields = stepFields[step as 1 | 2 | 3];
+    const fields = stepFields[step];
     fields.forEach((field) =>
       setValue(field, getValues(field), { shouldTouch: true }),
     );
@@ -87,7 +86,10 @@ export function WizardPage() {
     <div>
       {showResume && (
         <ResumeBanner
-          onResume={() => setShowResume(false)}
+          onResume={() => {
+            resumeDraft();
+            setShowResume(false);
+          }}
           onDiscard={() => {
             clearDraft();
             setShowResume(false);
@@ -95,20 +97,14 @@ export function WizardPage() {
           }}
         />
       )}
-
       <ProgressBar current={step} />
-
       <form onSubmit={handleFormSubmit} noValidate>
-        {step === 1 && <Step1Personal />}
-        {step === 2 && <Step2Family />}
-        {step === 3 && <Step3Situation />}
-
+        <StepComponent />
         {isError && (
           <p role="alert" className="mt-4 text-sm text-red-600">
             {t('submit.error')}
           </p>
         )}
-
         <StepNav
           isFirst={isFirst}
           isLast={isLast}

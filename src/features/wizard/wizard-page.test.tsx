@@ -3,6 +3,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import App from '@/App';
+import { DRAFT_STORAGE_KEY } from '@/features/wizard/defaults';
 
 function renderApp() {
   return render(
@@ -114,5 +115,54 @@ describe('Wizard navigation', () => {
     );
     // Reference number comes from the MSW mock backend.
     expect(screen.getByText(/SSW-/)).toBeInTheDocument();
+
+    // Storage is cleared after a successful submission.
+    expect(localStorage.getItem(DRAFT_STORAGE_KEY)).toBeNull();
+  });
+});
+
+describe('Draft persistence & resume', () => {
+  const SAVED_DRAFT = {
+    name: 'Returning User',
+    nationalId: '5555555555',
+    email: 'returning@example.com',
+  };
+
+  function seedDraft() {
+    localStorage.setItem(DRAFT_STORAGE_KEY, JSON.stringify(SAVED_DRAFT));
+  }
+
+  it('starts empty and only autofills the form after clicking Resume', async () => {
+    seedDraft();
+    const user = userEvent.setup();
+    renderApp();
+
+    // Form starts empty even though a draft exists.
+    expect(screen.getByLabelText('Full name')).toHaveValue('');
+
+    await user.click(screen.getByRole('button', { name: 'Resume' }));
+
+    // Now the saved values are loaded.
+    expect(screen.getByLabelText('Full name')).toHaveValue('Returning User');
+    expect(screen.getByLabelText('Email')).toHaveValue('returning@example.com');
+  });
+
+  it('overwrites a stale draft with new data when the user does not resume', async () => {
+    seedDraft();
+    const user = userEvent.setup();
+    renderApp();
+
+    // Ignore the banner and type fresh data instead.
+    await user.type(screen.getByLabelText('Full name'), 'Fresh Start');
+
+    await waitFor(() => {
+      const stored = JSON.parse(localStorage.getItem(DRAFT_STORAGE_KEY) ?? '{}');
+      expect(stored.name).toBe('Fresh Start');
+    });
+  });
+
+  it('shows no resume banner when there is no saved draft', () => {
+    renderApp();
+    expect(screen.queryByRole('button', { name: 'Resume' })).not.toBeInTheDocument();
   });
 });

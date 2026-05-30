@@ -1,18 +1,16 @@
 import { useTranslation } from 'react-i18next';
 import { TOTAL_STEPS } from '@/features/wizard/schema';
-
-const STEP_KEYS = ['steps.personal', 'steps.family', 'steps.situation'] as const;
+import { STEP_MAP, type StepNumber } from '@/features/wizard/steps/step-config';
 
 export function ProgressBar({ current }: { current: number }) {
   const { t } = useTranslation();
   const pct = Math.round((current / TOTAL_STEPS) * 100);
+  const titleKey = STEP_MAP[current as StepNumber].titleKey;
 
   return (
     <div className="mb-6">
       <div className="mb-2 flex items-center justify-between">
-        <p className="text-sm font-medium text-slate-700">
-          {t(STEP_KEYS[current - 1])}
-        </p>
+        <p className="text-sm font-medium text-slate-700">{t(titleKey)}</p>
         <p className="text-sm text-slate-500">
           {t('progress.step', { current, total: TOTAL_STEPS })}
         </p>

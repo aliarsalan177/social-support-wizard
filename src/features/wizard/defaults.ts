@@ -23,3 +23,13 @@ export const emptyApplication: ApplicationData = {
 };
 
 export const DRAFT_STORAGE_KEY = 'social-support-wizard:draft';
+
+/** True if the data has at least one filled field (i.e. worth persisting/resuming). */
+export function hasApplicationData(
+  data: Partial<ApplicationData> | null | undefined,
+): boolean {
+  if (!data) return false;
+  return Object.values(data).some(
+    (value) => typeof value === 'string' && value.trim() !== '',
+  );
+}
