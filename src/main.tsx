@@ -4,7 +4,7 @@ import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import '@/utils/i18n';
 import { DirectionProvider } from '@/app/providers/direction-provider';
-import App from './App.tsx';
+import App from '@/App';
 
 /** In dev, route the mock submit API through MSW so there's no real backend. */
 async function enableMocking() {

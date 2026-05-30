@@ -15,8 +15,8 @@ import { useTranslation } from 'react-i18next';
 import type { FieldPath } from 'react-hook-form';
 import type { HTMLInputTypeAttribute } from 'react';
 import type { ApplicationData } from '@/features/wizard/schema';
-import { TextField } from './text-field';
-import { SelectField } from './select-field';
+import { TextField } from '@/components/form/text-field';
+import { SelectField } from '@/components/form/select-field';
 
 interface SelectOption {
   value: string;
@@ -35,6 +35,8 @@ export interface TextFieldConfig extends BaseFieldConfig {
   type?: HTMLInputTypeAttribute;
   autoComplete?: string;
   inputMode?: 'text' | 'numeric' | 'tel' | 'email';
+  min?: string;
+  max?: string;
 }
 
 export interface SelectFieldConfig extends BaseFieldConfig {
@@ -65,6 +67,8 @@ export function FormFields({ fields }: { fields: FieldConfig[] }) {
                 type={field.type}
                 autoComplete={field.autoComplete}
                 inputMode={field.inputMode}
+                min={field.min}
+                max={field.max}
               />
             )}
           </div>

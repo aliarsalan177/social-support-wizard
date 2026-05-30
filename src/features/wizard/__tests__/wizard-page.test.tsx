@@ -52,13 +52,19 @@ async function fillStep3(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('Wizard navigation', () => {
-  it('blocks advancing when the current step is invalid', async () => {
+  it('keeps Next disabled until the current step is valid', async () => {
     const user = userEvent.setup();
     renderApp();
 
-    await user.click(screen.getByRole('button', { name: 'Next' }));
+    // Nothing filled → Next is disabled.
+    expect(screen.getByRole('button', { name: 'Next' })).toBeDisabled();
 
-    expect(await screen.findAllByText('This field is required')).not.toHaveLength(0);
+    await fillStep1(user);
+
+    // All required fields valid → Next becomes enabled.
+    await waitFor(() =>
+      expect(screen.getByRole('button', { name: 'Next' })).toBeEnabled(),
+    );
     expect(screen.getByText('Step 1 of 3')).toBeInTheDocument();
   });
 

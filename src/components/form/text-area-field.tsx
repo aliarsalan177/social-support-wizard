@@ -16,8 +16,8 @@
 import { useFormContext, type FieldPath } from 'react-hook-form';
 import type { ReactNode } from 'react';
 import type { ApplicationData } from '@/features/wizard/schema';
-import { FieldShell } from './field-shell';
-import { useFieldError } from './use-field-error';
+import { FieldShell } from '@/components/form/field-shell';
+import { useFieldError } from '@/components/form/use-field-error';
 
 interface TextAreaFieldProps {
   name: FieldPath<ApplicationData>;

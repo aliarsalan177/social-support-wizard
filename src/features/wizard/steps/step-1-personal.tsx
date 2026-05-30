@@ -1,10 +1,13 @@
 import { useTranslation } from 'react-i18next';
 import { FormFields, type FieldConfig } from '@/components/form/form-fields';
 
+// Local YYYY-MM-DD for today, used to block future dates of birth.
+const TODAY = new Date().toLocaleDateString('en-CA');
+
 const FIELDS: FieldConfig[] = [
   { kind: 'text', name: 'name', autoComplete: 'name' },
   { kind: 'text', name: 'nationalId', inputMode: 'numeric' },
-  { kind: 'text', name: 'dateOfBirth', type: 'date', autoComplete: 'bday' },
+  { kind: 'text', name: 'dateOfBirth', type: 'date', autoComplete: 'bday', max: TODAY },
   {
     kind: 'select',
     name: 'gender',

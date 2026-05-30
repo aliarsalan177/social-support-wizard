@@ -1,4 +1,4 @@
-import type { ApplicationData } from './schema';
+import type { ApplicationData } from '@/features/wizard/schema';
 
 /** Empty starting values for the whole form (all fields controlled). */
 export const emptyApplication: ApplicationData = {

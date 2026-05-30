@@ -21,9 +21,9 @@ import { useFormContext } from 'react-hook-form';
 import { useTranslation } from 'react-i18next';
 import type { ApplicationData } from '@/features/wizard/schema';
 import { isAiConfigured } from '@/utils/env';
-import { useHelpWrite } from './hooks/use-help-write';
-import { buildPrompt } from './build-prompt';
-import { SuggestionDialog } from './components/suggestion-dialog';
+import { useHelpWrite } from '@/features/ai-assist/hooks/use-help-write';
+import { buildPrompt } from '@/features/ai-assist/build-prompt';
+import { SuggestionDialog } from '@/features/ai-assist/components/suggestion-dialog';
 
 type AiField = Extract<
   keyof ApplicationData,

@@ -19,17 +19,17 @@
  * - useWizard, useSubmitApplication
  */
 import { useState, type FormEvent } from 'react';
-import { useFormContext } from 'react-hook-form';
+import { useFormContext, useWatch } from 'react-hook-form';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { ProgressBar } from './components/progress-bar';
-import { StepNav } from './components/step-nav';
-import { ResumeBanner } from './components/resume-banner';
-import { SuccessScreen } from './components/success-screen';
-import { STEP_MAP, type StepNumber } from './steps/step-config';
-import { stepFields, stepSchemas, TOTAL_STEPS, type ApplicationData } from './schema';
-import { useWizard } from './hooks/use-wizard';
-import { useSubmitApplication } from './hooks/use-submit-application';
+import { ProgressBar } from '@/features/wizard/components/progress-bar';
+import { StepNav } from '@/features/wizard/components/step-nav';
+import { ResumeBanner } from '@/features/wizard/components/resume-banner';
+import { SuccessScreen } from '@/features/wizard/components/success-screen';
+import { STEP_MAP, type StepNumber } from '@/features/wizard/steps/step-config';
+import { stepFields, stepSchemas, TOTAL_STEPS, type ApplicationData } from '@/features/wizard/schema';
+import { useWizard } from '@/features/wizard/hooks/use-wizard';
+import { useSubmitApplication } from '@/features/wizard/hooks/use-submit-application';
 
 function clampStep(raw: string | undefined): number {
   const n = Number(raw);
@@ -58,7 +58,7 @@ export function WizardPage() {
   const step = clampStep(stepParam) as StepNumber;
   const { Component: StepComponent } = STEP_MAP[step];
 
-  const { handleSubmit, trigger, getValues, setValue } =
+  const { handleSubmit, trigger, getValues, setValue, control } =
     useFormContext<ApplicationData>();
   const { hadSavedDraft, resumeDraft, clearDraft } = useWizard();
   const { submit, isSubmitting, isSuccess, isError, result } =
@@ -68,6 +68,11 @@ export function WizardPage() {
 
   const isFirst = step === 1;
   const isLast = step === TOTAL_STEPS;
+
+  // Re-validate the current step on every change so Next/Submit can be
+  // disabled until all of this step's required fields are filled and valid.
+  const watchedValues = useWatch({ control });
+  const isStepValid = stepSchemas[step].safeParse(watchedValues).success;
 
   const goToStep = (n: number) => navigate(`/apply/step/${n}`);
 
@@ -126,7 +131,7 @@ export function WizardPage() {
         <ResumeBanner onResume={handleResume} onDiscard={handleDiscard} />
       )}
       <ProgressBar current={step} />
-      <form onSubmit={handleFormSubmit} noValidate>
+      <form onSubmit={handleFormSubmit} noValidate className="max-sm:pb-24">
         <StepComponent />
         {isError && (
           <p role="alert" className="mt-4 text-sm text-red-600">
@@ -137,6 +142,7 @@ export function WizardPage() {
           isFirst={isFirst}
           isLast={isLast}
           isSubmitting={isSubmitting}
+          canProceed={isStepValid}
           onBack={handleBack}
         />
       </form>

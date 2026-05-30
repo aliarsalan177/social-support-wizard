@@ -1,1 +1,1 @@
-export { HelpMeWriteButton } from './help-me-button';
+export { HelpMeWriteButton } from '@/features/ai-assist/help-me-button';

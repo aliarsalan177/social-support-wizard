@@ -11,9 +11,9 @@
  * - ProgressBar (step title)
  */
 import type { ComponentType } from 'react';
-import { Step1Personal } from './step-1-personal';
-import { Step2Family } from './step-2-family';
-import { Step3Situation } from './step-3-situation';
+import { Step1Personal } from '@/features/wizard/steps/step-1-personal';
+import { Step2Family } from '@/features/wizard/steps/step-2-family';
+import { Step3Situation } from '@/features/wizard/steps/step-3-situation';
 
 export interface WizardStep {
   number: number;

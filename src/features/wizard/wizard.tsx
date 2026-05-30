@@ -16,8 +16,8 @@
  * - WizardProvider
  * - WizardPage
  */
-import { WizardProvider } from './providers/wizard-provider';
-import { WizardPage } from './wizard-page';
+import { WizardProvider } from '@/features/wizard/providers/wizard-provider';
+import { WizardPage } from '@/features/wizard/wizard-page';
 
 export function Wizard() {
   return (
