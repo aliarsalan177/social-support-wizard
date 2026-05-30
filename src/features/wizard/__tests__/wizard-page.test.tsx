@@ -14,9 +14,9 @@ function renderApp(route = '/apply/step/1') {
 }
 
 async function fillStep1(user: ReturnType<typeof userEvent.setup>) {
-  await user.type(screen.getByLabelText('Full name'), 'Sara Ahmed');
+  await user.type(screen.getByLabelText('Name'), 'Sara Ahmed');
   await user.type(screen.getByLabelText('National ID'), '1234567890');
-  fireEvent.change(screen.getByLabelText('Date of birth'), {
+  fireEvent.change(screen.getByLabelText('Date of Birth'), {
     target: { value: '1990-01-01' },
   });
   await user.selectOptions(screen.getByLabelText('Gender'), 'female');
@@ -29,24 +29,24 @@ async function fillStep1(user: ReturnType<typeof userEvent.setup>) {
 }
 
 async function fillStep2(user: ReturnType<typeof userEvent.setup>) {
-  await user.selectOptions(screen.getByLabelText('Marital status'), 'single');
-  await user.type(screen.getByLabelText('Number of dependents'), '0');
-  await user.selectOptions(screen.getByLabelText('Employment status'), 'unemployed');
-  await user.type(screen.getByLabelText('Monthly income'), '0');
-  await user.selectOptions(screen.getByLabelText('Housing status'), 'rented');
+  await user.selectOptions(screen.getByLabelText('Marital Status'), 'single');
+  await user.type(screen.getByLabelText('Dependents'), '0');
+  await user.selectOptions(screen.getByLabelText('Employment Status'), 'unemployed');
+  await user.type(screen.getByLabelText('Monthly Income'), '0');
+  await user.selectOptions(screen.getByLabelText('Housing Status'), 'rented');
 }
 
 async function fillStep3(user: ReturnType<typeof userEvent.setup>) {
   await user.type(
-    screen.getByLabelText('Current financial situation'),
+    screen.getByLabelText('Current Financial Situation'),
     'I am currently unemployed with no income.',
   );
   await user.type(
-    screen.getByLabelText('Employment circumstances'),
+    screen.getByLabelText('Employment Circumstances'),
     'I lost my job six months ago and cannot find work.',
   );
   await user.type(
-    screen.getByLabelText('Reason for applying'),
+    screen.getByLabelText('Reason for Applying'),
     'I need help covering rent and basic living costs.',
   );
 }
@@ -144,12 +144,12 @@ describe('Draft persistence & resume', () => {
     renderApp();
 
     // Form starts empty even though a draft exists.
-    expect(screen.getByLabelText('Full name')).toHaveValue('');
+    expect(screen.getByLabelText('Name')).toHaveValue('');
 
     await user.click(screen.getByRole('button', { name: 'Resume' }));
 
     // Now the saved values are loaded.
-    expect(screen.getByLabelText('Full name')).toHaveValue('Returning User');
+    expect(screen.getByLabelText('Name')).toHaveValue('Returning User');
     expect(screen.getByLabelText('Email')).toHaveValue('returning@example.com');
   });
 
@@ -159,7 +159,7 @@ describe('Draft persistence & resume', () => {
     renderApp();
 
     // Ignore the banner and type fresh data instead.
-    await user.type(screen.getByLabelText('Full name'), 'Fresh Start');
+    await user.type(screen.getByLabelText('Name'), 'Fresh Start');
 
     await waitFor(() => {
       const stored = JSON.parse(localStorage.getItem(DRAFT_STORAGE_KEY) ?? '{}');

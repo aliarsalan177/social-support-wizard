@@ -39,7 +39,7 @@ describe('HelpMeWriteButton', () => {
 
     await user.click(screen.getByRole('button', { name: 'Accept' }));
 
-    expect(screen.getByLabelText('Current financial situation')).toHaveValue(
+    expect(screen.getByLabelText('Current Financial Situation')).toHaveValue(
       'I am currently facing financial hardship.',
     );
   });
@@ -69,6 +69,6 @@ describe('HelpMeWriteButton', () => {
     await user.click(screen.getByRole('button', { name: 'Discard' }));
 
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
-    expect(screen.getByLabelText('Current financial situation')).toHaveValue('');
+    expect(screen.getByLabelText('Current Financial Situation')).toHaveValue('');
   });
 });

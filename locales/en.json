@@ -26,9 +26,9 @@
     "discard": "Start over"
   },
   "fields": {
-    "name": "Full name",
+    "name": "Name",
     "nationalId": "National ID",
-    "dateOfBirth": "Date of birth",
+    "dateOfBirth": "Date of Birth",
     "gender": "Gender",
     "address": "Address",
     "city": "City",
@@ -36,14 +36,14 @@
     "country": "Country",
     "phone": "Phone",
     "email": "Email",
-    "maritalStatus": "Marital status",
-    "dependents": "Number of dependents",
-    "employmentStatus": "Employment status",
-    "monthlyIncome": "Monthly income",
-    "housingStatus": "Housing status",
-    "currentFinancialSituation": "Current financial situation",
-    "employmentCircumstances": "Employment circumstances",
-    "reasonForApplying": "Reason for applying"
+    "maritalStatus": "Marital Status",
+    "dependents": "Dependents",
+    "employmentStatus": "Employment Status",
+    "monthlyIncome": "Monthly Income",
+    "housingStatus": "Housing Status",
+    "currentFinancialSituation": "Current Financial Situation",
+    "employmentCircumstances": "Employment Circumstances",
+    "reasonForApplying": "Reason for Applying"
   },
   "options": {
     "gender": { "male": "Male", "female": "Female", "other": "Other" },
@@ -80,7 +80,7 @@
     "tooShort": "Please provide a little more detail"
   },
   "ai": {
-    "helpMeWrite": "Help me write",
+    "helpMeWrite": "Help Me Write",
     "generating": "Generating a suggestion…",
     "dialogTitle": "AI suggestion",
     "accept": "Accept",
