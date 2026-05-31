@@ -228,6 +228,16 @@ src/
   expires after 10 minutes.
 - **Storage helpers** — JSON round-trip + debounce.
 
+### Deployment (Vercel)
+
+Two pieces make the SPA work on Vercel:
+
+- **`vercel.json`** rewrites all non-`/api` paths to `index.html`, so refreshing a
+  client route like `/apply/step/3` doesn't 404.
+- **`api/applications.js`** is a serverless function that stands in for the submit
+  backend in production (in dev/tests the same route is mocked by MSW), so the
+  final submit returns a reference number instead of a 405.
+
 ### Security & production improvements
 
 1. **Proxy the OpenAI call** through a backend so the key isn't exposed.
