@@ -97,7 +97,7 @@
   },
   "submit": {
     "successTitle": "Application submitted",
-    "successBody": "Thank you. Your reference number is {{ref}}.",
+    "successIntro": "Thank you. Your reference number is",
     "error": "We could not submit your application. Please try again."
   }
 }

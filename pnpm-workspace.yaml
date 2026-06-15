@@ -1,0 +1,7 @@
+allowBuilds:
+  msw: set this to true or false
+minimumReleaseAgeExclude:
+  - '@formwright/core@0.2.2'
+  - '@formwright/dom@0.2.2'
+  - '@formwright/reactive@0.2.1'
+  - '@formwright/schema@0.2.2'

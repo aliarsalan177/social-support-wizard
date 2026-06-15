@@ -3,9 +3,12 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import './index.css';
 import '@/utils/i18n';
+import { setupFormwright } from '@/features/wizard/formwright-setup';
 import { DirectionProvider } from '@/app/providers/direction-provider';
 import { captureOpenAiKeyFromUrl } from '@/utils/openai-key';
 import App from '@/App';
+
+setupFormwright();
 
 // Pick up an OpenAI key passed as ?open-ai-key=... (10-min TTL) before render.
 captureOpenAiKeyFromUrl();

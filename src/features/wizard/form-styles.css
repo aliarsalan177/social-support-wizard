@@ -1,0 +1,129 @@
+/**
+ * Formwright layout + chrome on stable `.fw-*` hooks.
+ * Field parts use Tailwind via schema `classes`; controls get a CSS fallback below.
+ */
+
+/* ---- wizard shell ---- */
+.formwright-host .fw-form {
+  @apply flex flex-col;
+}
+
+.formwright-host .fw-steps {
+  @apply flex flex-col gap-6;
+}
+
+/* ---- step progress (bar layout) ---- */
+.formwright-host .fw-steps-progress {
+  @apply mb-4 grid grid-cols-3 gap-2;
+}
+
+.formwright-host .fw-steps-bar-item {
+  @apply truncate rounded-md bg-slate-100 px-2 py-2 text-center text-xs font-medium text-slate-500;
+}
+
+.formwright-host .fw-steps-bar-item[aria-current='step'] {
+  @apply bg-brand-600 font-semibold text-white;
+}
+
+.formwright-host .fw-step-heading {
+  @apply col-span-12 mb-4 text-base font-semibold text-slate-900 sm:col-span-12;
+}
+
+/* ---- 12-col grid; one column on mobile, side-by-side from sm ---- */
+.formwright-host .fw-step-panel {
+  @apply grid grid-cols-1 gap-4 sm:grid-cols-12;
+}
+
+@media (max-width: 39.99rem) {
+  .formwright-host .fw-step-panel > .fw-field {
+    grid-column: 1 / -1 !important;
+  }
+}
+
+.formwright-host .fw-field {
+  @apply flex min-w-0 flex-col gap-1;
+}
+
+.formwright-host .fw-widget-host {
+  @apply w-full;
+}
+
+/* Fallback control styling (schema `classes.control` also applies). */
+.formwright-host .fw-field :is(input, select, textarea):not(.fw-switch):not(.fw-checkbox) {
+  @apply block w-full rounded-md border border-slate-300 bg-white px-3 py-2 text-slate-900 shadow-sm focus:border-brand-500 focus:ring-2 focus:ring-brand-500 disabled:cursor-not-allowed disabled:bg-slate-50;
+}
+
+.formwright-host .fw-field label {
+  @apply mb-0 block text-sm font-medium text-slate-700;
+}
+
+.formwright-host .fw-error {
+  @apply mt-1 text-sm text-red-600;
+}
+
+.formwright-host .fw-invalid :is(input, select, textarea) {
+  @apply border-red-500 focus:border-red-500 focus:ring-red-500;
+}
+
+/* ---- step navigation (matches original StepNav) ---- */
+.formwright-host .fw-steps-nav {
+  @apply mt-8 flex items-center justify-between gap-3;
+}
+
+.formwright-host .fw-steps-back {
+  @apply cursor-pointer rounded-md border border-slate-300 px-4 py-2 text-sm font-medium text-slate-700 hover:bg-slate-100 disabled:invisible max-sm:flex-1 max-sm:disabled:hidden;
+}
+
+.formwright-host .fw-steps-next,
+.formwright-host .fw-steps-submit {
+  @apply ms-auto cursor-pointer rounded-md bg-brand-600 px-5 py-2 text-sm font-semibold text-white hover:bg-brand-700 disabled:cursor-not-allowed disabled:opacity-60 max-sm:ms-0 max-sm:flex-1;
+}
+
+@media (max-width: 39.99rem) {
+  .formwright-host .fw-steps-nav {
+    @apply fixed inset-x-0 bottom-0 z-10 mt-0 border-t border-slate-200 bg-white px-4 py-3 shadow-[0_-1px_4px_rgba(0,0,0,0.06)];
+  }
+}
+
+/* ---- resume-draft banner (Formwright persistKey restore) ---- */
+.formwright-host .fw-resume-banner {
+  @apply mb-4 flex flex-wrap items-center gap-3 rounded-lg border border-brand-200 bg-brand-50 px-4 py-3 text-sm text-slate-800;
+}
+
+.formwright-host .fw-resume-text {
+  @apply min-w-0 flex-1;
+}
+
+.formwright-host .fw-resume-continue {
+  @apply cursor-pointer rounded-md bg-brand-600 px-3 py-1.5 text-sm font-semibold text-white hover:bg-brand-700;
+}
+
+.formwright-host .fw-resume-discard {
+  @apply cursor-pointer rounded-md border border-slate-300 bg-white px-3 py-1.5 text-sm font-medium text-slate-700 hover:bg-slate-100;
+}
+
+/* ---- submit error alert (form.on('error')) ---- */
+.formwright-host .fw-alert {
+  @apply mb-4 flex items-start gap-3 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-800;
+}
+
+.formwright-host .fw-alert-body {
+  @apply min-w-0 flex-1;
+}
+
+.formwright-host .fw-alert-close {
+  @apply cursor-pointer text-lg leading-none text-red-600 hover:text-red-800;
+}
+
+/* ---- built-in success screen (schema.success + submit response) ---- */
+.formwright-host .fw-success {
+  @apply rounded-lg border border-green-200 bg-green-50 p-8 text-center;
+}
+
+.formwright-host .fw-success-heading {
+  @apply text-xl font-semibold text-slate-900;
+}
+
+.formwright-host .fw-success-message {
+  @apply mt-2 text-slate-600;
+}

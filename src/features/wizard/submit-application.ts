@@ -1,6 +1,6 @@
 import { http } from '@/utils/http';
 import { env } from '@/utils/env';
-import type { ApplicationData } from '@/features/wizard/schema';
+import type { ApplicationData } from '@/features/wizard/types';
 
 export interface SubmitResult {
   referenceNumber: string;

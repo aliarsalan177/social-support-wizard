@@ -1,83 +1,302 @@
-import { z } from 'zod';
+import type { FormSchema } from '@formwright/core';
+import type { TFunction } from 'i18next';
 
-/*
- * One Zod schema per step. Validation messages are i18n KEYS — the Field
- * component runs them through t(), so errors are localized automatically.
- * The schemas are the single source of truth: React Hook Form validates
- * with them AND our form types are inferred from them (z.infer).
- */
+/** Formwright `persistKey` — restores values on refresh, cleared on submit. */
+export const PERSIST_KEY = 'social-support-wizard:draft';
 
-const required = { message: 'validation.required' };
+const today = () => new Date().toISOString().slice(0, 10);
 
-const digits = (msg: string) =>
-  z.string().min(1, required).regex(/^\d+$/, { message: msg });
+const field = {
+  field: 'text-start',
+  label: 'mb-1 block text-sm font-medium text-slate-700',
+  control:
+    'block w-full text-slate-900',
+  error: 'mt-1 text-sm text-red-600',
+};
 
-export const step1Schema = z.object({
-  name: z.string().min(1, required),
-  nationalId: digits('validation.nationalId'),
-  dateOfBirth: z
-    .string()
-    .min(1, required)
-    .refine((value) => new Date(value) < new Date(), {
-      message: 'validation.pastDate',
-    }),
-  gender: z.enum(['male', 'female', 'other'], required),
-  address: z.string().min(1, required),
-  city: z.string().min(1, required),
-  state: z.string().min(1, required),
-  country: z.string().min(1, required),
-  phone: z
-    .string()
-    .min(1, required)
-    .regex(/^[+]?[\d\s-]{7,15}$/, { message: 'validation.phone' }),
-  email: z.string().min(1, required).pipe(z.email({ message: 'validation.email' })),
-});
+/** The whole wizard as Formwright schema data — labels via `$t`, validation via `t()`. */
+export function applicationSchema(t: TFunction): FormSchema {
+  const req = t('validation.required');
 
-export const step2Schema = z.object({
-  maritalStatus: z.enum(
-    ['single', 'married', 'divorced', 'widowed'],
-    required,
-  ),
-  dependents: digits('validation.min0'),
-  employmentStatus: z.enum(
-    ['employed', 'unemployed', 'selfEmployed', 'student', 'retired'],
-    required,
-  ),
-  monthlyIncome: digits('validation.min0'),
-  housingStatus: z.enum(
-    ['owned', 'rented', 'withFamily', 'homeless'],
-    required,
-  ),
-});
-
-export const step3Schema = z.object({
-  currentFinancialSituation: z.string().min(10, { message: 'validation.tooShort' }),
-  employmentCircumstances: z.string().min(10, { message: 'validation.tooShort' }),
-  reasonForApplying: z.string().min(10, { message: 'validation.tooShort' }),
-});
-
-/** Full application = all three steps merged. */
-export const applicationSchema = step1Schema
-  .extend(step2Schema.shape)
-  .extend(step3Schema.shape);
-
-export type Step1Values = z.infer<typeof step1Schema>;
-export type Step2Values = z.infer<typeof step2Schema>;
-export type Step3Values = z.infer<typeof step3Schema>;
-export type ApplicationData = z.infer<typeof applicationSchema>;
-
-/** One schema per step, indexed by step number for the wizard. */
-export const stepSchemas = {
-  1: step1Schema,
-  2: step2Schema,
-  3: step3Schema,
-} as const;
-
-/** Field names per step — used by RHF's `trigger()` to validate one step. */
-export const stepFields = {
-  1: Object.keys(step1Schema.shape) as (keyof Step1Values)[],
-  2: Object.keys(step2Schema.shape) as (keyof Step2Values)[],
-  3: Object.keys(step3Schema.shape) as (keyof Step3Values)[],
-} as const;
-
-export const TOTAL_STEPS = 3;
+  return {
+    id: 'social-support',
+    version: '1.0',
+    persist: {
+      mode: 'auto',
+      resumeMessage: { $t: 'resume.body' },
+      resumeLabel: { $t: 'resume.resume' },
+      discardLabel: { $t: 'resume.discard' },
+    },
+    success: {
+      heading: { $t: 'submit.successTitle' },
+      message: `${t('submit.successIntro')} {{referenceNumber}}.`,
+    },
+    fields: [
+      {
+        id: 'wizard',
+        type: 'steps',
+        layout: 'bar',
+        showProgress: true,
+        nextLabel: { $t: 'nav.next' },
+        prevLabel: { $t: 'nav.back' },
+        submitLabel: { $t: 'nav.submit' },
+        fields: [
+          {
+            id: 'personal',
+            type: 'step',
+            label: { $t: 'steps.personal' },
+            fields: [
+              {
+                id: 'name',
+                type: 'text',
+                label: { $t: 'fields.name' },
+                colSpan: 6,
+                autocomplete: 'name',
+                classes: field,
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'nationalId',
+                type: 'text',
+                label: { $t: 'fields.nationalId' },
+                colSpan: 6,
+                classes: field,
+                validation: {
+                  kind: 'string',
+                  required: true,
+                  pattern: '^\\d+$',
+                  messages: { required: req, pattern: t('validation.nationalId') },
+                },
+              },
+              {
+                id: 'dateOfBirth',
+                type: 'date',
+                label: { $t: 'fields.dateOfBirth' },
+                colSpan: 6,
+                autocomplete: 'bday',
+                props: { max: today() },
+                classes: field,
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'gender',
+                type: 'select',
+                label: { $t: 'fields.gender' },
+                colSpan: 6,
+                placeholder: { $t: 'placeholders.select' },
+                classes: field,
+                options: [
+                  { label: { $t: 'options.gender.male' }, value: 'male' },
+                  { label: { $t: 'options.gender.female' }, value: 'female' },
+                  { label: { $t: 'options.gender.other' }, value: 'other' },
+                ],
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'address',
+                type: 'text',
+                label: { $t: 'fields.address' },
+                colSpan: 12,
+                autocomplete: 'street-address',
+                classes: field,
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'city',
+                type: 'text',
+                label: { $t: 'fields.city' },
+                colSpan: 6,
+                autocomplete: 'address-level2',
+                classes: field,
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'state',
+                type: 'text',
+                label: { $t: 'fields.state' },
+                colSpan: 6,
+                autocomplete: 'address-level1',
+                classes: field,
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'country',
+                type: 'text',
+                label: { $t: 'fields.country' },
+                colSpan: 6,
+                autocomplete: 'country-name',
+                classes: field,
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'phone',
+                type: 'text',
+                label: { $t: 'fields.phone' },
+                colSpan: 6,
+                autocomplete: 'tel',
+                classes: field,
+                validation: {
+                  kind: 'string',
+                  required: true,
+                  pattern: '^[+]?[\\d\\s-]{7,15}$',
+                  messages: { required: req, pattern: t('validation.phone') },
+                },
+              },
+              {
+                id: 'email',
+                type: 'email',
+                label: { $t: 'fields.email' },
+                colSpan: 12,
+                autocomplete: 'email',
+                classes: field,
+                validation: {
+                  kind: 'string',
+                  format: 'email',
+                  required: true,
+                  messages: { required: req, format: t('validation.email') },
+                },
+              },
+            ],
+          },
+          {
+            id: 'family',
+            type: 'step',
+            label: { $t: 'steps.family' },
+            fields: [
+              {
+                id: 'maritalStatus',
+                type: 'select',
+                label: { $t: 'fields.maritalStatus' },
+                colSpan: 6,
+                placeholder: { $t: 'placeholders.select' },
+                classes: field,
+                options: [
+                  { label: { $t: 'options.maritalStatus.single' }, value: 'single' },
+                  { label: { $t: 'options.maritalStatus.married' }, value: 'married' },
+                  { label: { $t: 'options.maritalStatus.divorced' }, value: 'divorced' },
+                  { label: { $t: 'options.maritalStatus.widowed' }, value: 'widowed' },
+                ],
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'dependents',
+                type: 'text',
+                label: { $t: 'fields.dependents' },
+                colSpan: 6,
+                classes: field,
+                validation: {
+                  kind: 'string',
+                  required: true,
+                  pattern: '^\\d+$',
+                  messages: { required: req, pattern: t('validation.min0') },
+                },
+              },
+              {
+                id: 'employmentStatus',
+                type: 'select',
+                label: { $t: 'fields.employmentStatus' },
+                colSpan: 6,
+                placeholder: { $t: 'placeholders.select' },
+                classes: field,
+                options: [
+                  { label: { $t: 'options.employmentStatus.employed' }, value: 'employed' },
+                  { label: { $t: 'options.employmentStatus.unemployed' }, value: 'unemployed' },
+                  { label: { $t: 'options.employmentStatus.selfEmployed' }, value: 'selfEmployed' },
+                  { label: { $t: 'options.employmentStatus.student' }, value: 'student' },
+                  { label: { $t: 'options.employmentStatus.retired' }, value: 'retired' },
+                ],
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+              {
+                id: 'monthlyIncome',
+                type: 'text',
+                label: { $t: 'fields.monthlyIncome' },
+                colSpan: 6,
+                classes: field,
+                validation: {
+                  kind: 'string',
+                  required: true,
+                  pattern: '^\\d+$',
+                  messages: { required: req, pattern: t('validation.min0') },
+                },
+              },
+              {
+                id: 'housingStatus',
+                type: 'select',
+                label: { $t: 'fields.housingStatus' },
+                colSpan: 12,
+                placeholder: { $t: 'placeholders.select' },
+                classes: field,
+                options: [
+                  { label: { $t: 'options.housingStatus.owned' }, value: 'owned' },
+                  { label: { $t: 'options.housingStatus.rented' }, value: 'rented' },
+                  { label: { $t: 'options.housingStatus.withFamily' }, value: 'withFamily' },
+                  { label: { $t: 'options.housingStatus.homeless' }, value: 'homeless' },
+                ],
+                validation: { kind: 'string', required: true, messages: { required: req } },
+              },
+            ],
+          },
+          {
+            id: 'situation',
+            type: 'step',
+            label: { $t: 'steps.situation' },
+            fields: [
+              {
+                id: 'currentFinancialSituation',
+                type: 'textarea',
+                label: { $t: 'fields.currentFinancialSituation' },
+                colSpan: 12,
+                widget: 'ai-textarea',
+                classes: {
+                  ...field,
+                  control: `${field.control} pb-12`,
+                },
+                validation: {
+                  kind: 'string',
+                  required: true,
+                  minLength: 10,
+                  messages: { required: req, minLength: t('validation.tooShort') },
+                },
+              },
+              {
+                id: 'employmentCircumstances',
+                type: 'textarea',
+                label: { $t: 'fields.employmentCircumstances' },
+                colSpan: 12,
+                widget: 'ai-textarea',
+                classes: {
+                  ...field,
+                  control: `${field.control} pb-12`,
+                },
+                validation: {
+                  kind: 'string',
+                  required: true,
+                  minLength: 10,
+                  messages: { required: req, minLength: t('validation.tooShort') },
+                },
+              },
+              {
+                id: 'reasonForApplying',
+                type: 'textarea',
+                label: { $t: 'fields.reasonForApplying' },
+                colSpan: 12,
+                widget: 'ai-textarea',
+                classes: {
+                  ...field,
+                  control: `${field.control} pb-12`,
+                },
+                validation: {
+                  kind: 'string',
+                  required: true,
+                  minLength: 10,
+                  messages: { required: req, minLength: t('validation.tooShort') },
+                },
+              },
+            ],
+          },
+        ],
+      },
+    ],
+  };
+}
