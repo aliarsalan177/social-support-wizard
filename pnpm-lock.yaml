@@ -9,11 +9,11 @@ importers:
   .:
     dependencies:
       '@formwright/core':
-        specifier: link:../../formwright/packages/core
-        version: link:../../formwright/packages/core
+        specifier: ^0.2.2
+        version: 0.2.2
       '@formwright/dom':
-        specifier: link:../../formwright/packages/dom
-        version: link:../../formwright/packages/dom
+        specifier: ^0.2.2
+        version: 0.2.2
       i18next:
         specifier: ^26.3.0
         version: 26.3.0(typescript@6.0.3)
@@ -290,6 +290,18 @@ packages:
     peerDependenciesMeta:
       '@noble/hashes':
         optional: true
+
+  '@formwright/core@0.2.2':
+    resolution: {integrity: sha512-o8ozaOpKVCKusNtJVX2IBjxI1wJjAmynKV3HndR2l+lfSoA8/ufkQuU42WMUna4nu1ypAaEn3T+EqygP8Gbqjg==}
+
+  '@formwright/dom@0.2.2':
+    resolution: {integrity: sha512-iuLpaLqVKyB/PuIEMntHYUNZZtWkOVzPESAtqGEGmbzJJk7yySSUsWeEZ03GgB8HsAR+6pHkMk8t9yMFXDWJyw==}
+
+  '@formwright/reactive@0.2.1':
+    resolution: {integrity: sha512-M+2Ed0uKlOSy9vcY1KXYbkZVmxwIfsJQa4JwO2QH2CEdoosGYekGVsMGWk0/eygL2DlVzUbluH+xbhmbdQORcg==}
+
+  '@formwright/schema@0.2.2':
+    resolution: {integrity: sha512-IjjOI2OYApXlHJPzz0yww4gh5mjRsyIshGJ4iPZHlOz9aGmdjoqp6PywbjdMc056yRP44XRZhDCw4j5Gkr2P8w==}
 
   '@humanfs/core@0.19.2':
     resolution: {integrity: sha512-UhXNm+CFMWcbChXywFwkmhqjs3PRCmcSa/hfBgLIb7oQ5HNb1wS0icWsGtSAUNgefHeI+eBrA8I1fxmbHsGdvA==}
@@ -1939,6 +1951,20 @@ snapshots:
       levn: 0.4.1
 
   '@exodus/bytes@1.15.1': {}
+
+  '@formwright/core@0.2.2':
+    dependencies:
+      '@formwright/reactive': 0.2.1
+      '@formwright/schema': 0.2.2
+
+  '@formwright/dom@0.2.2':
+    dependencies:
+      '@formwright/core': 0.2.2
+      '@formwright/schema': 0.2.2
+
+  '@formwright/reactive@0.2.1': {}
+
+  '@formwright/schema@0.2.2': {}
 
   '@humanfs/core@0.19.2':
     dependencies:

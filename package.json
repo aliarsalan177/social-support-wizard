@@ -14,8 +14,8 @@
     "format": "prettier --write ."
   },
   "dependencies": {
-    "@formwright/core": "link:../../formwright/packages/core",
-    "@formwright/dom": "link:../../formwright/packages/dom",
+    "@formwright/core": "^0.2.2",
+    "@formwright/dom": "^0.2.2",
     "i18next": "^26.3.0",
     "i18next-browser-languagedetector": "^8.2.1",
     "ky": "^2.0.2",

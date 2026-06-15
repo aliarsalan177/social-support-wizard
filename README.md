@@ -3,13 +3,13 @@
 A 3-step financial-assistance application wizard for a government social-support
 portal. This repo is a **Formwright refactor** of the original case-study forms:
 the wizard was rebuilt on **[Formwright](https://github.com/aliarsalan177/formwright)**
-(schema-driven, signal-reactive) instead of React Hook Form + Zod + per-step React
-components.
+(`@formwright/core` + `@formwright/dom` from **npm**) instead of React Hook Form +
+Zod + per-step React components.
 
-The entire application form is one serializable **`FormSchema`** (~300 lines in
-`schema.ts`). Formwright renders it, validates it, navigates steps, persists
-drafts, and shows the success screen — React only mounts the form and wires the
-API + AI widget (~70 lines in `form-host.tsx`).
+The entire application form is one serializable **`FormSchema`** (~290 lines in
+`schema.ts`). Formwright renders it, validates it, navigates steps, and persists
+drafts — React only mounts the form, wires the API, handles the success event,
+and registers one custom AI widget (~100 lines in `form-host.tsx`).
 
 Also includes OpenAI **"Help Me Write"**, bilingual **English / Arabic (RTL)**,
 accessibility, and offline draft saving.
@@ -22,50 +22,52 @@ Built for the Front-End Developer case study.
 
 This project **refactored forms** from a custom React wizard stack to Formwright.
 
-| Before (removed) | After (Formwright) |
+| Before (removed) | After (Formwright `@0.2.2`) |
 |---|---|
 | React Hook Form + `@hookform/resolvers` + **Zod** | Declarative `validation` on each field in `schema.ts` |
 | `WizardProvider`, `useWizard`, per-step routes (`/apply/step/:step`) | Single `/apply` route; steps are `type: 'steps'` in the schema |
 | `step-1-personal.tsx`, `step-2-family.tsx`, … (3 step components) | One nested schema: `personal` / `family` / `situation` steps |
-| Custom `ProgressBar`, `StepNav`, `ResumeBanner`, `SuccessScreen` | Built-in progress bar, Back/Next/Submit, resume banner, success screen |
-| `form-values.ts`, `defaults.ts`, `application-schema.ts` (Zod) | `persistKey` + `schema.persist` + `schema.success` |
-| React `useState` mirroring submit result / errors | `Form` signals + `form.on('success' \| 'error')` + built-in `.fw-alert` |
+| Custom `ProgressBar`, `StepNav`, `ResumeBanner` | Built-in progress bar + Back / Next / Submit |
+| `form-values.ts`, `defaults.ts`, `application-schema.ts` (Zod) | `persistKey` on the `Form` options |
+| React `useState` for submit result / errors | `form.on('success')` + built-in `.fw-alert` on error |
 
-**Dependencies removed:** `react-hook-form`, `@hookform/resolvers`, `zod`.
+**Removed:** `react-hook-form`, `@hookform/resolvers`, `zod`.
 
-**Dependencies added:** `@formwright/core`, `@formwright/dom` (linked from the
-[Formwright monorepo](https://github.com/aliarsalan177/formwright) for this demo).
+**Added:** `@formwright/core@^0.2.2`, `@formwright/dom@^0.2.2` (public [npm](https://www.npmjs.com/package/@formwright/core)).
 
-**Wizard feature size:** ~770 lines total under `src/features/wizard/` (schema +
-thin host + one custom widget + styles + tests) — previously spread across
-providers, hooks, steps, and form components.
+**Wizard feature size:** ~770 lines under `src/features/wizard/` (schema, host,
+widgets, styles, tests) vs the old spread across providers, hooks, steps, and
+form components.
 
 ---
 
-## Formwright features used in this demo
+## Formwright `@0.2.2` — what this demo uses
 
-| Formwright capability | How we use it |
+Installed from npm — no local monorepo link required.
+
+| Capability | Used in this repo |
 |---|---|
-| **Multi-step wizard** (`steps` + `step`) | 3-step application with bar progress |
-| **Per-step validation** | Validates current step before **Next** |
-| **Live field validation** | Real-time errors as the user types |
-| **Declarative validation** | `required`, `pattern`, `format: 'email'`, `minLength`, custom messages |
-| **`colSpan` grid** | Two-column layout on `sm+` (6 + 6 of 12) |
-| **`classes` / Tailwind** | Per-field `label`, `control`, `error` utilities in schema |
-| **`$t` i18n provider refs** | Labels, options, nav, persist, success — EN + AR |
-| **`autocomplete`** | Sensible defaults per field type |
-| **`persistKey` + `persist`** | Auto-save draft + values **and active step** to `localStorage` |
-| **Resume banner** | Restore on reload → Continue / Start over |
-| **`schema.success`** | Post-submit screen; `{{referenceNumber}}` from API response |
-| **Submit pipeline** | `send` option → `validate → send → success/error` |
-| **`.fw-alert`** | Dismissible top-of-form error on failed submit |
+| **Multi-step wizard** (`steps` + `step`) | 3-step bar progress |
+| **Per-step + live validation** | Before Next; real-time field errors |
+| **Declarative rules** | `required`, `pattern`, `format: 'email'`, `minLength` |
+| **`colSpan` + `classes`** | 2-col grid + Tailwind per field |
+| **`$t` i18n provider** | Labels, options, nav — EN + AR |
+| **`autocomplete`** | Per-field sensible defaults |
+| **`persistKey`** | Auto-save to `localStorage`; restore on reload; clear on submit |
+| **`send` option** | `validate → send → success / error` pipeline |
+| **`form.on('success')`** | Show `SuccessScreen` with API reference number |
+| **`.fw-alert`** | Dismissible error banner on failed submit |
 | **`form.isSubmitting`** | Disabled submit + loading label |
-| **Custom widget** (`registerWidget`) | `date` (max = today), `ai-textarea` (Help Me Write) |
-| **Stable `.fw-*` CSS hooks** | `form-styles.css` for grid, nav, banner, alerts, success |
+| **`registerWidget`** | Custom `date` (max = today) + `ai-textarea` (AI assist) |
+| **`.fw-*` CSS hooks** | `form-styles.css` for grid, nav, alerts |
 
-No parallel React form state — the `Form` instance is the single source of truth.
-Subscribe with `form.on('change' \| 'success' \| 'error')` or read signals like
-`form.values`, `form.isSubmitting`, `form.successData`.
+**Not in npm `0.2.2` yet** (available in newer Formwright releases): `schema.persist`
+(resume banner), `schema.success` (built-in success template), active-step restore.
+This demo handles success via `form.on('success')` instead.
+
+The `Form` instance is the single source of truth — subscribe with
+`form.on('change' | 'success' | 'error')` or read signals like `form.values`,
+`form.isSubmitting`.
 
 ---
 
@@ -74,12 +76,12 @@ Subscribe with `form.on('change' \| 'success' \| 'error')` or read signals like
 | Concern | Choice |
 |---|---|
 | Framework | **React 19** + **Vite** + **TypeScript** |
-| **Forms** | **[Formwright](https://github.com/aliarsalan177/formwright)** — schema-driven wizard (refactored from RHF + Zod) |
+| **Forms** | **[Formwright](https://github.com/aliarsalan177/formwright)** `^0.2.2` — schema-driven wizard |
 | Styling | **Tailwind CSS v4** on `.fw-*` hooks + schema `classes` |
 | HTTP | **ky** |
 | i18n | **react-i18next** + Formwright `$t` provider |
-| Routing | **React Router v7** — `/apply` only (steps live inside the form) |
-| Testing | **Vitest** + **RTL** + **MSW** (20 tests) |
+| Routing | **React Router v7** — `/apply` only |
+| Testing | **Vitest** + **RTL** + **MSW** (16 tests) |
 | Package manager | **pnpm** |
 
 ---
@@ -88,16 +90,9 @@ Subscribe with `form.on('change' \| 'success' \| 'error')` or read signals like
 
 Requirements: **Node 20+** and **pnpm**.
 
-Formwright is linked from a **local sibling checkout** (`../../formwright`):
-
 ```bash
-git clone https://github.com/aliarsalan177/formwright.git ../formwright
-cd ../formwright && pnpm install && pnpm run build
-cd ../social-support-wizard && pnpm install
-```
-
-```bash
-cp .env.example .env      # add OpenAI key for Step 3 AI assist (optional)
+pnpm install
+cp .env.example .env      # OpenAI key for Step 3 AI assist (optional)
 pnpm dev                   # http://localhost:5173/apply
 ```
 
@@ -106,15 +101,18 @@ pnpm dev                   # http://localhost:5173/apply
 ### Scripts
 
 ```bash
-pnpm dev | build | test | test:run | test:coverage | lint | format
+pnpm dev              # dev server (MSW mocks submit API)
+pnpm build            # tsc + production build
+pnpm test:run         # 16 tests once (CI)
+pnpm test             # Vitest watch mode
+pnpm lint | format
 ```
 
 ---
 
-## Setting up the OpenAI API key
+## OpenAI API key (Step 3 AI assist)
 
-Step 3 **"Help me write"** uses the OpenAI Chat Completions API (custom
-`ai-textarea` widget — not part of core Formwright).
+Custom `ai-textarea` widget — not part of core Formwright.
 
 ```bash
 # .env
@@ -129,27 +127,25 @@ Deployed demo with a URL key:
 https://<your-deployment>/apply?open-ai-key=sk-...
 ```
 
-Key is stored in `localStorage` for 10 minutes, then expires. Build-time
-`VITE_OPENAI_API_KEY` takes precedence.
+Key stored in `localStorage` for 10 minutes, then expires.
 
-> ⚠️ Client-side OpenAI calls expose the key — demo only. Proxy through a backend
-> in production.
+> ⚠️ Client-side OpenAI exposes the key — demo only. Proxy through a backend in production.
 
 ---
 
 ## What it does
 
 - **3-step wizard** — Personal → Family & Financial → Situation (AI textareas)
-- **Live + per-step validation** — Formwright engine (no Zod)
+- **Live + per-step validation** — no Zod; rules in `schema.ts`
 - **Built-in Back / Next / Submit** — with submit loading state
-- **Draft persistence** — auto-save; restore values + step on reload; resume banner
-- **Success screen** — schema-driven, reference number from submit response
+- **Draft persistence** — `persistKey` auto-saves; values restored on reload
+- **Success screen** — `form.on('success')` renders reference number
 - **Submit errors** — Formwright `.fw-alert`
 - **AI Help Me Write** — custom widget on Step 3
 - **EN / AR + RTL** — language toggle + `$t` labels
 - **Date of birth** — custom `date` widget, max = today
-- **Responsive** — 1-col mobile, 2-col desktop; fixed bottom nav on small screens
-- **Mock submit** — MSW → reference number `SSW-…`
+- **Responsive** — 1-col mobile, 2-col desktop; fixed bottom nav on mobile
+- **Mock submit** — MSW / Vercel API → `SSW-…` reference number
 
 ---
 
@@ -158,54 +154,64 @@ Key is stored in `localStorage` for 10 minutes, then expires. Build-time
 ### Integration pattern
 
 ```tsx
-// form-host.tsx — entire React ↔ Formwright bridge
+// form-host.tsx — React ↔ Formwright bridge
 const form = new Form(schema, {}, {
   persistKey: PERSIST_KEY,
   providers: { i18n: { t: (key, args) => String(t(key, args)) } },
   send: async (payload) => submitApplication(flatten(payload)),
 });
+
 form.mount(hostRef.current);
+
+form.on('success', (data) => {
+  // Render SuccessScreen with data.referenceNumber
+});
 ```
 
 | File | Role |
 |---|---|
-| `schema.ts` | `FormSchema` — fields, steps, validation, i18n, persist, success |
-| `form-host.tsx` | Mount form, `send`, flatten nested values for API |
-| `formwright-setup.tsx` | Register `date` + `ai-textarea` widgets |
-| `form-styles.css` | Tailwind on `.fw-*` layout chrome |
+| `schema.ts` | `FormSchema` — fields, steps, validation, i18n labels |
+| `form-host.tsx` | `new Form(…).mount(ref)`, `send`, `form.on('success')` |
+| `formwright-setup.tsx` | `registerWidget('date' \| 'ai-textarea')` |
+| `form-styles.css` | Tailwind on `.fw-*` layout hooks |
+| `components/success-screen.tsx` | Shown after `form.on('success')` |
 | `components/ai-textarea-control.tsx` | React UI inside the AI widget |
+| `submit-application.ts` | POST to MSW / Vercel API |
+
+Nested Formwright values (`wizard.personal.name`, …) are flattened to a flat
+`ApplicationData` payload before submit.
 
 ### Folder structure
 
 ```
 src/features/wizard/
-├── schema.ts              # FormSchema (source of truth)
-├── form-host.tsx          # new Form(…).mount(ref)
-├── formwright-setup.tsx   # registerWidget(...)
+├── schema.ts
+├── form-host.tsx
+├── formwright-setup.tsx
 ├── form-styles.css
 ├── submit-application.ts
 ├── types.ts
-├── wizard.tsx             # export { FormHost as Wizard }
+├── wizard.tsx                    # export { FormHost as Wizard }
 └── components/
+    ├── success-screen.tsx
     └── ai-textarea-control.tsx
 ```
 
-Legacy paths (`/apply/step/:step`) redirect to `/apply`.
+`/apply/step/:step` redirects to `/apply` (steps live inside the form).
 
-### Testing (`pnpm test:run` — 20 tests)
+### Testing (`pnpm test:run` — 16 tests)
 
-- Formwright: render, live validation, full submit, success + reference number
-- Persistence: auto-save, reload restore, resume banner, Start over, step restore
-- Submit error: alert shown, draft retained
+- Formwright: step 1 render, live validation, full submit + success screen
+- Persistence: `persistKey` auto-save, silent restore on reload
+- Submit error: `.fw-alert` shown, draft retained
 - AI assist: accept suggestion, retry on error
-- OpenAI URL key + storage helpers
+- OpenAI URL key capture + storage helpers
 
 ### Deployment (Vercel)
 
-- `vercel.json` — SPA rewrite
+- `vercel.json` — SPA rewrite to `index.html`
 - `api/applications.js` — production submit endpoint
-- **Note:** replace `link:../../formwright/...` with published `@formwright/*`
-  npm versions for CI/Vercel (or vendor the built packages)
+- Formwright from **public npm** — works in CI/Vercel without a local link
 
 ### Security & production
 
@@ -213,3 +219,10 @@ Legacy paths (`/apply/step/:step`) redirect to `/apply`.
 2. Encrypt or avoid storing PII in `localStorage` drafts
 3. Re-validate submissions server-side
 4. E2E tests (Playwright) in both languages
+
+### Upgrading Formwright
+
+When a newer `@formwright/*` is published with `schema.persist`, `schema.success`,
+and resume banner support, you can move success/persist config into `schema.ts`
+and remove the manual `form.on('success')` handler. See the
+[Formwright README](https://github.com/aliarsalan177/formwright#form-caching-with-user-consent).
