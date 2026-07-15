@@ -1,15 +1,18 @@
 /**
  * Formwright demo host — the README React pattern:
- *   new Form(schema).mount(ref)
+ *   new Form(schema).mount(ref) + form.on('success' | 'error')
  *
- * Success, submit errors, draft cache, and wizard UX are all driven by the
- * Form instance (signals + events) — no parallel React form state.
+ * Draft cache, validation, and wizard nav are handled by @formwright/core +
+ * @formwright/dom. Success UI is driven by the form's `success` event (public
+ * npm 0.2.x); submit errors use the built-in `.fw-alert`.
  */
 import { useEffect, useMemo, useRef } from 'react';
+import { createRoot, type Root } from 'react-dom/client';
 import { Form, type FormValues } from '@formwright/core';
 import { useTranslation } from 'react-i18next';
+import { SuccessScreen } from '@/features/wizard/components/success-screen';
 import { applicationSchema, PERSIST_KEY } from '@/features/wizard/schema';
-import { submitApplication } from '@/features/wizard/submit-application';
+import { submitApplication, type SubmitResult } from '@/features/wizard/submit-application';
 import type { ApplicationData } from '@/features/wizard/types';
 
 function flatten(values: FormValues): ApplicationData {
@@ -39,11 +42,14 @@ function flatten(values: FormValues): ApplicationData {
 export function FormHost() {
   const { t, i18n } = useTranslation();
   const hostRef = useRef<HTMLDivElement>(null);
+  const successRef = useRef<HTMLDivElement>(null);
   const schema = useMemo(() => applicationSchema(t), [t, i18n.language]);
 
   useEffect(() => {
     const host = hostRef.current;
     if (!host) return;
+
+    let successRoot: Root | null = null;
 
     const form = new Form(schema, {}, {
       persistKey: PERSIST_KEY,
@@ -58,7 +64,26 @@ export function FormHost() {
     });
 
     const disposeMount = form.mount(host);
+
+    const showSuccess = (data: SubmitResult) => {
+      host.hidden = true;
+      const panel = successRef.current;
+      if (!panel) return;
+      panel.hidden = false;
+      successRoot?.unmount();
+      successRoot = createRoot(panel);
+      successRoot.render(
+        <SuccessScreen referenceNumber={data.referenceNumber} />,
+      );
+    };
+
+    const offSuccess = form.on('success', (data) => {
+      showSuccess(data as SubmitResult);
+    });
+
     return () => {
+      offSuccess();
+      successRoot?.unmount();
       disposeMount();
       form.destroy();
     };
@@ -67,6 +92,7 @@ export function FormHost() {
   return (
     <div className="formwright-host max-sm:pb-24">
       <div ref={hostRef} />
+      <div ref={successRef} hidden />
     </div>
   );
 }

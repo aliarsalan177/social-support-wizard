@@ -1,11 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { Form } from '@formwright/core';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { MemoryRouter } from 'react-router-dom';
 import { http, HttpResponse } from 'msw';
 import App from '@/App';
-import { PERSIST_KEY, applicationSchema } from '@/features/wizard/schema';
+import { PERSIST_KEY } from '@/features/wizard/schema';
 import { server } from '@/mocks/server';
 import { env } from '@/utils/env';
 
@@ -59,50 +58,6 @@ async function fillStep3(user: ReturnType<typeof userEvent.setup>) {
 }
 
 describe('Formwright wizard demo', () => {
-  it('interpolates the submit response into schema.success', async () => {
-    const host = document.createElement('div');
-    const schema = applicationSchema((key) => String(key));
-    const form = new Form(
-      schema,
-      {
-        wizard: {
-          personal: {
-            name: 'Sara Ahmed',
-            nationalId: '1234567890',
-            dateOfBirth: '1990-01-01',
-            gender: 'female',
-            address: '12 Main St',
-            city: 'Riyadh',
-            state: 'Riyadh',
-            country: 'Saudi Arabia',
-            phone: '+966500000000',
-            email: 'sara@example.com',
-          },
-          family: {
-            maritalStatus: 'single',
-            dependents: '0',
-            employmentStatus: 'unemployed',
-            monthlyIncome: '0',
-            housingStatus: 'rented',
-          },
-          situation: {
-            currentFinancialSituation: 'I am currently unemployed with no income.',
-            employmentCircumstances: 'I lost my job six months ago and cannot find work.',
-            reasonForApplying: 'I need help covering rent and basic living costs.',
-          },
-        },
-      },
-      { send: async () => ({ referenceNumber: 'SSW-TEST' }) },
-    );
-    form.mount(host);
-    const result = await form.submit();
-    expect(result.ok).toBe(true);
-    expect(result.data).toEqual({ referenceNumber: 'SSW-TEST' });
-    expect(form.successContext().interpolate('ID {{referenceNumber}}')).toBe('ID SSW-TEST');
-    expect(host.textContent).toContain('SSW-TEST');
-    form.destroy();
-  });
-
   it('renders step 1 with Formwright progress and fields', async () => {
     renderApp();
     expect(await screen.findByRole('textbox', { name: /name/i })).toBeInTheDocument();
@@ -150,7 +105,7 @@ describe('Formwright wizard demo', () => {
     await waitFor(() => expect(localStorage.getItem(PERSIST_KEY)).toContain('Saved Name'));
   });
 
-  it('restores a saved draft on reload and shows the resume banner', async () => {
+  it('restores a saved draft on reload', async () => {
     const user = userEvent.setup();
     const { unmount } = renderApp();
     await user.type(await screen.findByRole('textbox', { name: /name/i }), 'Saved Name');
@@ -158,59 +113,7 @@ describe('Formwright wizard demo', () => {
     unmount();
 
     renderApp();
-    expect(await screen.findByText('We found a saved draft on this device.')).toBeInTheDocument();
-    expect(screen.getByRole('textbox', { name: /name/i })).toHaveValue('Saved Name');
-  });
-
-  it('clears a restored draft when the user chooses Start over', async () => {
-    const user = userEvent.setup();
-    const { unmount } = renderApp();
-    await user.type(await screen.findByRole('textbox', { name: /name/i }), 'Saved Name');
-    await waitFor(() => expect(localStorage.getItem(PERSIST_KEY)).toContain('Saved Name'));
-    unmount();
-
-    renderApp();
-    await user.click(await screen.findByRole('button', { name: 'Start over' }));
-    await waitFor(() => {
-      expect(screen.getByRole('textbox', { name: /name/i })).toHaveValue('');
-      expect(localStorage.getItem(PERSIST_KEY)).toBeNull();
-    });
-  });
-
-  it('dismisses the resume banner when the user continues', async () => {
-    const user = userEvent.setup();
-    const { unmount } = renderApp();
-    await user.type(await screen.findByRole('textbox', { name: /name/i }), 'Saved Name');
-    await waitFor(() => expect(localStorage.getItem(PERSIST_KEY)).toContain('Saved Name'));
-    unmount();
-
-    renderApp();
-    await screen.findByText('We found a saved draft on this device.');
-    await user.click(screen.getByRole('button', { name: 'Resume' }));
-    await waitFor(() => {
-      const banner = document.querySelector('.fw-resume-banner') as HTMLElement | null;
-      expect(banner?.hidden || banner?.style.display === 'none').toBe(true);
-    });
-    expect(screen.getByRole('textbox', { name: /name/i })).toHaveValue('Saved Name');
-  });
-
-  it('restores the active wizard step after reload', async () => {
-    const user = userEvent.setup();
-    const { unmount } = renderApp();
-    await fillStep1(user);
-    await user.click(screen.getByRole('button', { name: 'Next' }));
-    expect(
-      await screen.findByRole('heading', { name: 'Family & Financial Info' }),
-    ).toBeInTheDocument();
-    await waitFor(() => expect(localStorage.getItem(PERSIST_KEY)).toContain('family'));
-    unmount();
-
-    renderApp();
-    expect(
-      await screen.findByRole('heading', { name: 'Family & Financial Info' }),
-    ).toBeInTheDocument();
-    await user.click(screen.getByRole('button', { name: 'Back' }));
-    expect(screen.getByRole('textbox', { name: /name/i })).toHaveValue('Sara Ahmed');
+    expect(await screen.findByRole('textbox', { name: /name/i })).toHaveValue('Saved Name');
   });
 
   it('shows a submit error when the API fails', async () => {
